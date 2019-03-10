@@ -7,6 +7,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -16,12 +17,13 @@ import static de.robv.android.xposed.XposedHelpers.*;
 
 public class Main implements IXposedHookZygoteInit {
 
-    private static final String SSL_CLASS_NAME = "com.android.org.conscrypt.TrustManagerImpl";
-    private static final String SSL_METHOD_NAME = "checkTrustedRecursive";
+    private final String SSL_CLASS_NAME = "com.android.org.conscrypt.TrustManagerImpl";
+    private final String SSL_METHOD_NAME = "checkTrustedRecursive";
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
-        XposedBridge.log("TrustMeAlready loaded!");
+        XposedBridge.log("TrustMeAlready loading...");
+        int hookedMethods = 0;
 
         for (Method method : findClass(SSL_CLASS_NAME, null).getDeclaredMethods()) {
             if (!checkSSLMethod(method)) {
@@ -37,9 +39,13 @@ public class Main implements IXposedHookZygoteInit {
                 }
             });
 
-            XposedBridge.log("Hooking method:\n" + method.toString());
+            XposedBridge.log("Hooking method:");
+            XposedBridge.log(method.toString());
             findAndHookMethod(SSL_CLASS_NAME, null, SSL_METHOD_NAME, params.toArray());
+            hookedMethods++;
         }
+
+        XposedBridge.log(String.format(Locale.ENGLISH, "TrustMeAlready loaded! Hooked %d methods", hookedMethods));
     }
 
     private boolean checkSSLMethod(Method method) {
