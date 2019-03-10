@@ -17,8 +17,10 @@ import static de.robv.android.xposed.XposedHelpers.*;
 
 public class Main implements IXposedHookZygoteInit {
 
-    private final String SSL_CLASS_NAME = "com.android.org.conscrypt.TrustManagerImpl";
-    private final String SSL_METHOD_NAME = "checkTrustedRecursive";
+    private static final String SSL_CLASS_NAME = "com.android.org.conscrypt.TrustManagerImpl";
+    private static final String SSL_METHOD_NAME = "checkTrustedRecursive";
+    private static final Class<?> SSL_RETURN_TYPE = List.class;
+    private static final Class<?> SSL_RETURN_PARAM_TYPE = X509Certificate.class;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -53,13 +55,20 @@ public class Main implements IXposedHookZygoteInit {
             return false;
         }
 
+        // check return type
+        if (!SSL_RETURN_TYPE.isAssignableFrom(method.getReturnType())) {
+            return false;
+        }
+
+        // check if parameterized return type
         Type returnType = method.getGenericReturnType();
         if (!(returnType instanceof ParameterizedType)) {
             return false;
         }
 
+        // check parameter type
         Type[] args = ((ParameterizedType) returnType).getActualTypeArguments();
-        if (args.length != 1 || args[0] instanceof X509Certificate) {
+        if (args.length != 1 || !(args[0].equals(SSL_RETURN_PARAM_TYPE))) {
             return false;
         }
 
