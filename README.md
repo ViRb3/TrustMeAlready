@@ -10,4 +10,7 @@ An Xposed module to disable SSL verification and pinning on Android using the ex
 * Android 9.0, arm64, EdXposed v0.3.0.0_beta3
 
 ### Download
-This module is available at the [Xposed module repository](https://repo.xposed.info/module/com.virb3.trustmealready)
+Available under **Releases** or at the [Xposed module repository](https://repo.xposed.info/module/com.virb3.trustmealready)
+
+### Troubleshooting
+Check your Xposed logs, chances are this module couldn't hook the correct method
