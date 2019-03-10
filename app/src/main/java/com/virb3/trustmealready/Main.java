@@ -1,4 +1,4 @@
-package com.virb3.trustme;
+package com.virb3.trustmealready;
 
 import java.lang.reflect.Method;
 import java.security.cert.X509Certificate;
@@ -12,7 +12,7 @@ import de.robv.android.xposed.XposedBridge;
 
 import static de.robv.android.xposed.XposedHelpers.*;
 
-public class TrustMeAlready implements IXposedHookZygoteInit {
+public class Main implements IXposedHookZygoteInit {
 
     private static final String SSL_CLASS_NAME = "com.android.org.conscrypt.TrustManagerImpl";
     private static final String SSL_METHOD_NAME = "checkTrustedRecursive";
