@@ -3,7 +3,7 @@ An Xposed module to disable SSL verification and pinning on Android using the ex
 
 ### Requirements
 * An Xposed-compatible hooking system. Some options at time of writing:
-    * [EdXposed](https://github.com/ElderDrivers/EdXposed) (Android 9)
+    * [EdXposed](https://github.com/ElderDrivers/EdXposed) (Android 9, Magisk-based and passes SafetyNet)
     * ['OG' Xposed](https://forum.xda-developers.com/showthread.php?t=3034811) (Android 5-8)
 
 ### Tested
