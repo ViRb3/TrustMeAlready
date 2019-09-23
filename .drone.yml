@@ -1,0 +1,44 @@
+kind: pipeline
+name: build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  image: circleci/android:api-28
+  environment:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    KEYSTORE:
+      from_secret: KEYSTORE
+    STORE_PASSWORD:
+      from_secret: STORE_PASSWORD
+    KEY_PASSWORD:
+      from_secret: KEY_PASSWORD
+  volumes:
+  - name: project
+    path: /home/circleci/project
+  commands:
+  - sudo mv * ~/project || true
+  - sudo chown -R circleci:circleci ~/project
+  - cd ~/project
+  - ./generate-keystore-config.sh
+  - ./gradlew assembleRelease
+
+- name: publish
+  image: plugins/github-release
+  when:
+    event:
+      - tag
+  volumes:
+  - name: project
+    path: /project
+  settings:
+    api_key:
+      from_secret: github_token
+    files: "/project/app/build/outputs/apk/release/*.apk"
+
+volumes:
+- name: project
+  temp: {}
